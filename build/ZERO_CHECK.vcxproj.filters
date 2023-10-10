@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\104bu\OneDrive - University of Brighton\sjeb10_modules\Year 3\CI628 - Multiplayer Game Development\CI628\build\CMakeFiles\47b09b4ad17d58b96e08ff41c2b531f7\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{63D62258-85DB-3867-8ADA-713560E0239E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,8 @@
+﻿  Building Custom Rule C:/Users/104bu/OneDrive - University of Brighton/sjeb10_modules/Year 3/CI628 - Multiplayer Game Development/CI628/CMakeLists.txt
+  Main.cpp
+C:\Users\104bu\OneDrive - University of Brighton\sjeb10_modules\Year 3\CI628 - Multiplayer Game Development\CI628\src\Main.cpp(27,21): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\104bu\OneDrive - University of Brighton\sjeb10_modules\Year 3\CI628 - Multiplayer Game Development\CI628\src\Main.cpp(36,19): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\104bu\OneDrive - University of Brighton\sjeb10_modules\Year 3\CI628 - Multiplayer Game Development\CI628\src\Main.cpp(69,70): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  MyGame.cpp
+  Generating Code...
+  MyGame.vcxproj -> C:\Users\104bu\OneDrive - University of Brighton\sjeb10_modules\Year 3\CI628 - Multiplayer Game Development\CI628\build\Debug\MyGame.exe
