@@ -8,10 +8,12 @@
 #include "SDL.h"
 
 static struct GameData {
-    int scene = 0;
+    int totalPlayers = 0;
+    int drawingPlayer = 0;
     int mouseX = 0;
     int mouseY = 0;
     int mouseDown = 0;
+    int winningPlayers = 0;
 } game_data;
 
 class line

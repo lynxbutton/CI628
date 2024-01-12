@@ -52,12 +52,14 @@ void drawingScreen::renderPoints(SDL_Renderer* renderer) {
 
 void MyGame::on_receive(std::string cmd, std::vector<std::string>& args) {
     if (cmd == "GAME_DATA") {
-        // we should have exactly 6 arguments
-        if (args.size() == 4) {
-            game_data.scene = stoi(args.at(0));
-            game_data.mouseX = stoi(args.at(1));
-            game_data.mouseY = stoi(args.at(2));
-            game_data.mouseDown = stoi(args.at(3));
+        // we should have exactly 5 arguments
+        if (args.size() == 6) {
+            game_data.totalPlayers = stoi(args.at(0));
+            game_data.drawingPlayer = stoi(args.at(1));
+            game_data.mouseX = stoi(args.at(2));
+            game_data.mouseY = stoi(args.at(3));
+            game_data.mouseDown = stoi(args.at(4));
+            game_data.winningPlayers = stoi(args.at(5));
         }
     }
     else {
@@ -84,7 +86,7 @@ void MyGame::input(SDL_Event& event) {
 }
 
 void MyGame::update() {
-    if (mouseDown)
+    if (mouseDown == 1)
     {
         int x, y;
         SDL_GetMouseState(&x, &y);

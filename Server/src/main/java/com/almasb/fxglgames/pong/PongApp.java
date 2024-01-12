@@ -87,6 +87,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
     private int mouseDown;
     private int mouseX;
     private int mouseY;
+    private int winningPlayers;
 
     @Override
     protected void initInput() {
@@ -167,6 +168,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         mouseDown = 0;
         mouseX = 0;
         mouseY = 0;
+        winningPlayers = 0;
     }
 
     @Override
@@ -247,8 +249,8 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
     @Override
     protected void onUpdate(double tpf) {
         if (!server.getConnections().isEmpty()) {
-            //var message = "GAME_DATA," + totalPlayers + "," + drawingPlayer + "," + mouseX + "," + mouseY + "," + mouseDown;
-            var message = "GAME_DATA," + drawingPlayer + "," + mouseX + "," + mouseY + "," + mouseDown;
+            var message = "GAME_DATA," + totalPlayers + "," + drawingPlayer + "," + mouseX + "," + mouseY + "," + mouseDown + "," + winningPlayers;
+            //var message = "GAME_DATA," + drawingPlayer + "," + mouseX + "," + mouseY + "," + mouseDown;
             server.broadcast(message);
         }
     }
