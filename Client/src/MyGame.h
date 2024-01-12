@@ -14,6 +14,7 @@ static struct GameData {
     int mouseY = 0;
     int mouseDown = 0;
     int winningPlayers = 0;
+    std::string answer = " ";
 } game_data;
 
 class line
