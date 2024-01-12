@@ -12,8 +12,6 @@ static struct GameData {
     int mouseX = 0;
     int mouseY = 0;
     int mouseDown = 0;
-    int ballX = 0;
-    int ballY = 0;
 } game_data;
 
 class line

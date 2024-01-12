@@ -2,24 +2,35 @@
 
 void drawingScreen::calcPoints(int x, int y, int down)
 {
-    if (down == 1)
+    if (drawRect->x < x && drawRect->x + drawRect->w > x &&
+        drawRect->y < y && drawRect->y + drawRect->h > y)
     {
-        if (lines.size() <= 0)
+        if (down == 1)
         {
+            if (lines.size() <= 0)
+            {
+                line newl;
+                lines.push_back(newl);
+            }
+            SDL_Point newPoint = { x, y };
+            lines[currentLine].addToPoints(newPoint);
+        }
+        else if (lastMouseState != down)
+        {
+            currentLine += 1;
             line newl;
             lines.push_back(newl);
         }
-        SDL_Point newPoint = { x, y };
-        lines[currentLine].addToPoints(newPoint);
+
+        lastMouseState = down;
     }
-    else if (lastMouseState != down)
+    else
     {
         currentLine += 1;
         line newl;
         lines.push_back(newl);
     }
 
-    lastMouseState = down;
 }
 
 void drawingScreen::renderPoints(SDL_Renderer* renderer) {
@@ -42,13 +53,11 @@ void drawingScreen::renderPoints(SDL_Renderer* renderer) {
 void MyGame::on_receive(std::string cmd, std::vector<std::string>& args) {
     if (cmd == "GAME_DATA") {
         // we should have exactly 6 arguments
-        if (args.size() == 6) {
+        if (args.size() == 4) {
             game_data.scene = stoi(args.at(0));
             game_data.mouseX = stoi(args.at(1));
             game_data.mouseY = stoi(args.at(2));
             game_data.mouseDown = stoi(args.at(3));
-            game_data.ballX = stoi(args.at(4));
-            game_data.ballY = stoi(args.at(5));
         }
     }
     else {
@@ -75,24 +84,14 @@ void MyGame::input(SDL_Event& event) {
 }
 
 void MyGame::update() {
-    switch (game_data.scene) {
-    case 0:
-        //
-
-        if (mouseDown)
-        {
-            int x, y;
-            SDL_GetMouseState(&x, &y);
-            send("X_" + std::to_string(x));
-            send("Y_" + std::to_string(y));
-            draw.calcPoints(game_data.mouseX, game_data.mouseY, game_data.mouseDown);
-        }
-        break;
-    case 1:
-        //
-        break;
+    if (mouseDown)
+    {
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        send("X_" + std::to_string(x));
+        send("Y_" + std::to_string(y));
+        draw.calcPoints(game_data.mouseX, game_data.mouseY, game_data.mouseDown);
     }
-    //player1.y = game_data.player1Y;
 }
 
 void MyGame::render(SDL_Renderer* renderer) {
@@ -101,16 +100,9 @@ void MyGame::render(SDL_Renderer* renderer) {
     SDL_RenderFillRect(renderer, &BGRect);
 
 
-    switch (game_data.scene) {
-    case 0:
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderFillRect(renderer, draw.getRect());
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(renderer, draw.getRect());
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        draw.renderPoints(renderer);
-        break;
-    case 1:
-        std::cout << "Tuesday";
-        break;
-    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    draw.renderPoints(renderer);
 }
