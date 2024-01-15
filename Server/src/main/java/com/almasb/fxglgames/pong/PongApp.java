@@ -33,17 +33,20 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.input.MouseEventData;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.net.*;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.ui.UI;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -78,7 +81,10 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
     private BatComponent player1Bat;
     private BatComponent player2Bat;
 
+    private Entity lines;
+
     private Entity page;
+    private drawingScreen draw;
 
     private Server<String> server;
 
@@ -92,7 +98,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Up1") {
+        /*getInput().addAction(new UserAction("Up1") {
             @Override
             protected void onAction() {
                 player1Bat.up();
@@ -138,7 +144,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
             protected void onActionEnd() {
                 player2Bat.stop();
             }
-        }, KeyCode.K);
+        }, KeyCode.K);*/
 
         getInput().addAction(new UserAction("mouse") {
             @Override
@@ -197,7 +203,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
 
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().setGravity(0, 0);
+        /*getPhysicsWorld().setGravity(0, 0);
 
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.BALL, EntityType.WALL) {
             @Override
@@ -234,7 +240,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         };
 
         getPhysicsWorld().addCollisionHandler(ballBatHandler);
-        getPhysicsWorld().addCollisionHandler(ballBatHandler.copyFor(EntityType.BALL, EntityType.ENEMY_BAT));
+        getPhysicsWorld().addCollisionHandler(ballBatHandler.copyFor(EntityType.BALL, EntityType.ENEMY_BAT));*/
     }
 
     @Override
@@ -250,11 +256,16 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
 
     @Override
     protected void onUpdate(double tpf) {
+        mouseX = (int) getInput().getMouseXWorld();
+        mouseY = (int) getInput().getMouseYWorld();
+
         if (!server.getConnections().isEmpty()) {
             var message = "GAME_DATA," + totalPlayers + "," + drawingPlayer + "," + mouseX + "," + mouseY + "," + mouseDown + "," + winningPlayers + "," + answer;
             //var message = "GAME_DATA," + drawingPlayer + "," + mouseX + "," + mouseY + "," + mouseDown;
             server.broadcast(message);
         }
+
+        draw.calcPoints(mouseX, mouseY, mouseDown, page, lines);
     }
 
     private void initScreenBounds() {
@@ -267,14 +278,16 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
     }
 
     private void initGameObjects() {
-        ball = spawn("ball", getAppWidth() / 2 - 5, getAppHeight() / 2 - 5);
-        player1 = spawn("bat", new SpawnData(getAppWidth() / 4, getAppHeight() / 2 - 30).put("isPlayer", true));
-        player2 = spawn("bat", new SpawnData(3 * getAppWidth() / 4 - 20, getAppHeight() / 2 - 30).put("isPlayer", false));
+        //ball = spawn("ball", getAppWidth() / 2 - 5, getAppHeight() / 2 - 5);
+        //player1 = spawn("bat", new SpawnData(getAppWidth() / 4, getAppHeight() / 2 - 30).put("isPlayer", true));
+        //player2 = spawn("bat", new SpawnData(3 * getAppWidth() / 4 - 20, getAppHeight() / 2 - 30).put("isPlayer", false));
 
         page = spawn("page", 25, 25);
+        draw = new drawingScreen();
+        lines = spawn("lines",0,0);
 
-        player1Bat = player1.getComponent(BatComponent.class);
-        player2Bat = player2.getComponent(BatComponent.class);
+        //player1Bat = player1.getComponent(BatComponent.class);
+        //player2Bat = player2.getComponent(BatComponent.class);
     }
 
     private void playHitAnimation(Entity bat) {
@@ -285,7 +298,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
                 .rotate(bat)
                 .from(FXGLMath.random(-25, 25))
                 .to(0)
-                .buildAndPlay();
+                .build();
     }
 
     @Override

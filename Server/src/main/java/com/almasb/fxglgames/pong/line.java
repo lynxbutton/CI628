@@ -1,34 +1,32 @@
 package com.almasb.fxglgames.pong;
 
+import com.almasb.fxgl.entity.Entity;
+import javafx.geometry.Point2D;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class line {
-    private int[] pointX;
-    private int[] pointY;
+    private List<Point2D> points = new ArrayList<>();
 
     //adds points to the line
-    void addToPoints(int x, int y)
+    void addToPoints(Point2D p)
     {
-        if(pointX.length != 0 && pointY.length != 0) {
-            pointX[pointX.length - 1] = x;
-            pointY[pointY.length - 1] = y;
+        if(points.size() != 0) {
+            points.add(points.size() - 1, p);
         }
         else
         {
-            pointX[0] = x;
-            pointY[0] = y;
+            points.add(p);
         }
     }
 
-    int getPointX(int p)
+    Point2D getPoint(int p)
     {
-        return pointX[p];
+        return points.get(p);
     }
-    int getPointY(int p)
-    {
-        return pointY[p];
-    }
-
     int getSize()
     {
-        return pointX.length;
+        return points.size();
     }
 }

@@ -30,6 +30,7 @@ void drawingScreen::calcPoints(int x, int y, int down)
         line newl;
         lines.push_back(newl);
     }
+    std::cout << "\n" << drawRect->x << " " << drawRect->w << " " << drawRect->y << " " << drawRect->h;
 
 }
 

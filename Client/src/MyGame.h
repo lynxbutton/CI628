@@ -36,16 +36,16 @@ private:
     SDL_Surface drawSurface;
     int brushThickness = 5;
     SDL_Colour brushColour = { 0, 0, 0, 255 };
-    std::vector<SDL_Point> drawing;
+    //std::vector<SDL_Point> drawing;
     //std::vector<SDL_Point> lines;
     std::vector<line> lines;
-    std::vector<int> stopIndex;
+    //std::vector<int> stopIndex;
     int currentLine = 0;
     int lastMouseState = 0;
 
 public:
     SDL_Rect* getRect() { return drawRect; };
-    std::vector<SDL_Point> getDrawing() { return drawing; };
+    //std::vector<SDL_Point> getDrawing() { return drawing; };
     void calcPoints(int x, int y, int down);
     void renderPoints(SDL_Renderer* renderer);
 
