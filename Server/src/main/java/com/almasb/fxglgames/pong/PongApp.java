@@ -191,7 +191,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         });
 
         getGameWorld().addEntityFactory(new PongFactory());
-        getGameScene().setBackgroundColor(Color.rgb(0, 0, 5));
+        getGameScene().setBackgroundColor(Color.rgb(72, 75, 94));
 
         initScreenBounds();
         initGameObjects();
@@ -251,8 +251,8 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         MainUIController controller = new MainUIController();
         UI ui = getAssetLoader().loadUI("main.fxml", controller);
 
-        controller.getLabelScorePlayer().textProperty().bind(getip("player1score").asString());
-        controller.getLabelScoreEnemy().textProperty().bind(getip("player2score").asString());
+        //ontroller.getLabelScorePlayer().textProperty().bind(getip("player1score").asString());
+        //controller.getLabelScoreEnemy().textProperty().bind(getip("player2score").asString());
 
         getGameScene().addUI(ui);
     }

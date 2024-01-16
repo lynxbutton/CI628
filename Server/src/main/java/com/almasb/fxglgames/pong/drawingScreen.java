@@ -27,7 +27,7 @@ public class drawingScreen extends Component {
     {
         if(lines.size() > 0)
         {
-            if(p.getX() < x && p.getWidth() > x && p.getY() < y && p.getHeight() > y)
+            if(p.getX() < x && p.getWidth() + p.getX() > x && p.getY() < y && p.getHeight() + p.getY() > y)
             { //p.getX() < x && p.getX() + p.getWidth() > x && p.getY() < y && p.getY() + p.getHeight() > y
                 if(down == 1)
                 {
