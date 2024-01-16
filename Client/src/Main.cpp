@@ -78,6 +78,8 @@ static int on_send(void* socket_ptr) {
 void loop(SDL_Renderer* renderer) {
     SDL_Event event;
 
+    game->start();
+
     while (is_running) {
         // input
         while (SDL_PollEvent(&event)) {

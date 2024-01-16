@@ -44,6 +44,7 @@ private:
     int lastMouseState = 0;
 
 public:
+    drawingScreen() { line nl;  lines.push_back(nl); };
     SDL_Rect* getRect() { return drawRect; };
     //std::vector<SDL_Point> getDrawing() { return drawing; };
     void calcPoints(int x, int y, int down);
@@ -57,6 +58,7 @@ class MyGame {
         SDL_Rect player1 = { 0, 0, 20, 60 };
         SDL_Rect BGRect = { 0, 0, 800, 600 };
         drawingScreen draw;
+        int clientNum = 0;
 
     public:
         std::vector<std::string> messages;
@@ -66,6 +68,7 @@ class MyGame {
         void on_receive(std::string message, std::vector<std::string>& args);
         void send(std::string message);
         void input(SDL_Event& event);
+        void start();
         void update();
         void render(SDL_Renderer* renderer);
 };

@@ -199,6 +199,9 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         var t = new Thread(server.startTask()::run);
         t.setDaemon(true);
         t.start();
+
+        totalPlayers = 1;
+        drawingPlayer = 1;
     }
 
     @Override
@@ -256,9 +259,11 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
 
     @Override
     protected void onUpdate(double tpf) {
-        mouseX = (int) getInput().getMouseXWorld();
-        mouseY = (int) getInput().getMouseYWorld();
-
+        if(drawingPlayer == 1)
+        {
+            mouseX = (int) getInput().getMouseXWorld();
+            mouseY = (int) getInput().getMouseYWorld();
+        }
         if (!server.getConnections().isEmpty()) {
             var message = "GAME_DATA," + totalPlayers + "," + drawingPlayer + "," + mouseX + "," + mouseY + "," + mouseDown + "," + winningPlayers + "," + answer;
             //var message = "GAME_DATA," + drawingPlayer + "," + mouseX + "," + mouseY + "," + mouseDown;
@@ -306,12 +311,26 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         var tokens = message.split(",");
 
         Arrays.stream(tokens).skip(1).forEach(key -> {
+            if(key.startsWith("PLAY_")){
+                var s = key.substring(5,key.length());
+                if(Integer.parseInt(s) == totalPlayers + 1)
+                {
+                    totalPlayers += 1;
+                    System.out.println(totalPlayers);
+                }
+                else
+                {
+                    server.broadcast("PLAY_" + totalPlayers + 1 + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                    System.out.println("WRONG " + totalPlayers);
+                }
+            }
             if (key.endsWith("_DOWN")) {
-                getInput().mockButtonPress(MouseButton.PRIMARY);
+                //getInput().mockButtonPress(MouseButton.PRIMARY);
                 mouseDown = 1;
                 //getInput().mockKeyPress(KeyCode.valueOf(key.substring(0, 1)));
             } else if (key.endsWith("_UP")) {
-                getInput().mockButtonRelease(MouseButton.PRIMARY);
+                //getInput().mockButtonRelease(MouseButton.PRIMARY);
+                mouseDown = 0;
             }else if(key.startsWith("X_")){
                 mouseX = Integer.parseInt(key.substring(2, key.length()));
             }else if(key.startsWith("Y_")){
