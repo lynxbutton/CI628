@@ -31,18 +31,15 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.input.MouseEventData;
-import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.input.*;
 import com.almasb.fxgl.net.*;
-import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.ui.UI;
-import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
@@ -53,6 +50,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -69,22 +67,17 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setTitle("Pong");
+        settings.setTitle("Guess drawing");
         settings.setVersion("1.0");
         settings.setFontUI("pong.ttf");
         settings.setApplicationMode(ApplicationMode.DEBUG);
     }
 
-    private Entity player1;
-    private Entity player2;
-    private Entity ball;
-    private BatComponent player1Bat;
-    private BatComponent player2Bat;
-
     private Entity lines;
-
+    private Entity commSect;
     private Entity page;
     private drawingScreen draw;
+    private MainUIController controller;
 
     private Server<String> server;
 
@@ -94,58 +87,12 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
     private int mouseX;
     private int mouseY;
     private int winningPlayers;
+    private String comment;
     private String answer;
+    private int comLength = 0;
 
     @Override
     protected void initInput() {
-        /*getInput().addAction(new UserAction("Up1") {
-            @Override
-            protected void onAction() {
-                player1Bat.up();
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player1Bat.stop();
-            }
-        }, KeyCode.W);
-
-        getInput().addAction(new UserAction("Down1") {
-            @Override
-            protected void onAction() {
-                player1Bat.down();
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player1Bat.stop();
-            }
-        }, KeyCode.S);
-
-        getInput().addAction(new UserAction("Up2") {
-            @Override
-            protected void onAction() {
-                player2Bat.up();
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player2Bat.stop();
-            }
-        }, KeyCode.I);
-
-        getInput().addAction(new UserAction("Down2") {
-            @Override
-            protected void onAction() {
-                player2Bat.down();
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player2Bat.stop();
-            }
-        }, KeyCode.K);*/
-
         getInput().addAction(new UserAction("mouse") {
             @Override
             protected void onAction(){
@@ -162,21 +109,86 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
                 System.out.println("Mouse up");
                 server.broadcast(MOUSE_UP);
             }
-
         }, MouseButton.PRIMARY);
+
+        getInput().addAction(new UserAction("enter") {
+            @Override
+            protected void onAction(){
+                System.out.println(comment);
+            }
+        }, KeyCode.ENTER);
+
+        getInput().addTriggerListener(new TriggerListener() {
+            @Override
+            protected void onActionBegin(Trigger trigger) {
+                //System.out.println("Begin: " + trigger);
+                if(trigger.getName().length() == 1)
+                {
+                    Character trig = trigger.getName().charAt(0);
+                    if(Character.isLetter(trig))
+                    {
+                        if(comment != null)
+                        {
+                            if(comLength + 1 < 24)
+                            {
+                                if(comLength + 1 == 12)
+                                {
+                                    comment += trigger.getName().toLowerCase() + "\n";
+                                }
+                                else
+                                {
+                                    comment += trigger.getName().toLowerCase();
+                                }
+                                comLength += 1;
+                                controller.setTypingComm(comment);
+                            }
+                        }
+                        else
+                        {
+                            comLength += 1;
+                            comment = trigger.getName().toLowerCase();
+                            controller.setTypingComm(comment);
+                        }
+                    }
+                }
+                else if(trigger.getName() == "Backspace")
+                {
+                    if(comLength > 0)
+                    {
+                        comLength -= 1;
+                        comment = comment.substring(0, comment.length() - 1);
+                        controller.setTypingComm(comment);
+                    }
+                }
+                else if(trigger.getName() == "Space")
+                {
+                    comLength += 1;
+                    comment += " ";
+                    controller.setTypingComm(comment);
+                }
+            }
+        });
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("player1score", 0);
-        vars.put("player2score", 0);
-        totalPlayers = 0;
-        drawingPlayer = 0;
+        //vars.put("player1score", 0);
+        vars.put("comment", "");
+        totalPlayers = 1;
+        drawingPlayer = 1;
         mouseDown = 0;
         mouseX = 0;
         mouseY = 0;
         winningPlayers = 0;
-        answer = "apple";
+        answer = genAnswer();
+    }
+
+    protected String genAnswer()
+    {
+        String[] answers = {"apple", "car", "house", "chair", "table"};
+        int index = random(0, answers.length - 1);
+        //System.out.println(answers[index]);
+        return answers[index];
     }
 
     @Override
@@ -199,9 +211,6 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         var t = new Thread(server.startTask()::run);
         t.setDaemon(true);
         t.start();
-
-        totalPlayers = 1;
-        drawingPlayer = 1;
     }
 
     @Override
@@ -248,11 +257,12 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
 
     @Override
     protected void initUI() {
-        MainUIController controller = new MainUIController();
+        controller = new MainUIController();
         UI ui = getAssetLoader().loadUI("main.fxml", controller);
 
-        //ontroller.getLabelScorePlayer().textProperty().bind(getip("player1score").asString());
-        //controller.getLabelScoreEnemy().textProperty().bind(getip("player2score").asString());
+        //controller.getLabelScoreEnemy().textProperty().bind(getip("comment").asString());
+
+        controller.setTypingComm(comment);
 
         getGameScene().addUI(ui);
     }
@@ -263,6 +273,10 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         {
             mouseX = (int) getInput().getMouseXWorld();
             mouseY = (int) getInput().getMouseYWorld();
+        }
+        else
+        {
+
         }
         if (!server.getConnections().isEmpty()) {
             var message = "GAME_DATA," + totalPlayers + "," + drawingPlayer + "," + mouseX + "," + mouseY + "," + mouseDown + "," + winningPlayers + "," + answer;
@@ -290,20 +304,10 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         page = spawn("page", 25, 25);
         draw = new drawingScreen();
         lines = spawn("lines",0,0);
+        commSect = spawn("comment", 565, 25);
 
         //player1Bat = player1.getComponent(BatComponent.class);
         //player2Bat = player2.getComponent(BatComponent.class);
-    }
-
-    private void playHitAnimation(Entity bat) {
-        animationBuilder()
-                .autoReverse(true)
-                .duration(Duration.seconds(0.5))
-                .interpolator(Interpolators.BOUNCE.EASE_OUT())
-                .rotate(bat)
-                .from(FXGLMath.random(-25, 25))
-                .to(0)
-                .build();
     }
 
     @Override
@@ -320,8 +324,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
                 }
                 else
                 {
-                    server.broadcast("PLAY_" + totalPlayers + 1 + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                    System.out.println("WRONG " + totalPlayers);
+                    server.broadcast("PLAY_" + Integer.parseInt(s) + "_" + (totalPlayers + 1));
                 }
             }
             if (key.endsWith("_DOWN")) {

@@ -56,24 +56,4 @@ public class drawingScreen extends Component {
         }
         lastMouseState = down;
     }
-
-    void renderPoints(Entity l) {
-        if(lines != null)
-        {
-            for (int i = 0; i < lines.size(); i++)
-            {
-                for (int p = 1; p < lines.get(i).getSize(); p++)
-                {
-                    if (lines.get(i).getSize() > p + 1)
-                    {
-                        System.out.println("NOTNULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLl");
-                        Point2D p1 = lines.get(i).getPoint(p);
-                        Point2D p2 = lines.get(i).getPoint(p + 1);
-                        //Color.BLACK
-                        l.getViewComponent().addChild(new Line(p1.getX(), p1.getY(), p2.getX(), p2.getY()));
-                    }
-                }
-            }
-        }
-    }
 }

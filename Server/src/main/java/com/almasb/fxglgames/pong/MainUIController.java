@@ -31,7 +31,10 @@ import com.almasb.fxgl.ui.UIController;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.util.Duration;
+
+import java.awt.*;
 
 /**
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
@@ -43,6 +46,8 @@ public class MainUIController implements UIController {
 
     @FXML
     private Label labelScoreEnemy;
+    @FXML
+    private Label typedComm;
 
     public Label getLabelScoreEnemy() {
         return labelScoreEnemy;
@@ -52,10 +57,12 @@ public class MainUIController implements UIController {
         return labelScorePlayer;
     }
 
+    public void setTypingComm(String txt) {labelScoreEnemy.setText(txt);}
+
     @Override
     public void init() {
         labelScorePlayer.setFont(FXGL.getUIFactory().newFont(72));
-        labelScoreEnemy.setFont(FXGL.getUIFactory().newFont(72));
+        labelScoreEnemy.setFont(FXGL.getUIFactory().newFont(22));
 
         labelScoreEnemy.layoutBoundsProperty().addListener((observable, oldValue, newBounds) -> {
             double width = newBounds.getWidth();
@@ -69,6 +76,11 @@ public class MainUIController implements UIController {
         labelScoreEnemy.textProperty().addListener((observable, oldValue, newValue) -> {
             animateLabel(labelScoreEnemy);
         });
+
+        labelScoreEnemy.setText("Hello");
+        labelScoreEnemy.setStyle("-fx-text-fill: black;");
+        labelScoreEnemy.setLayoutX(50);
+        labelScoreEnemy.setLayoutY(350);
     }
 
     private void animateLabel(Label label) {

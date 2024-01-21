@@ -41,6 +41,7 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -111,6 +112,21 @@ public class PongFactory implements EntityFactory {
         return entityBuilder(data)
                 .type(EntityType.DRAWING_PAGE)
                 .viewWithBBox(new Rectangle(500, 500, Color.WHITE))
+                //.with(new BatComponent())
+                .build();
+    }
+    @Spawns("comment")
+    public Entity newCommSection(SpawnData data)
+    {
+        var grp = new Group();
+        var bg = new Rectangle(200, 500, Color.WHITESMOKE);
+        var sq = new Rectangle(200, 75, Color.WHITE);
+        sq.setY(bg.getHeight() - sq.getHeight());
+        grp.getChildren().add(bg);
+        grp.getChildren().add(sq);
+        return entityBuilder(data)
+                .type(EntityType.DRAWING_PAGE)
+                .viewWithBBox(grp)
                 //.with(new BatComponent())
                 .build();
     }

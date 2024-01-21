@@ -64,11 +64,12 @@ void MyGame::on_receive(std::string cmd, std::vector<std::string>& args) {
     }
     else {
         std::cout << "Received: " << cmd << std::endl;
-        if (cmd == "PLAY")
+        if (cmd.substr(0, 5) == "PLAY_")
         {
-            if (args.size() == 1)
+            if (stoi(cmd.substr(5, 6)) == clientNum)
             {
-                clientNum = stoi(args.at(0));
+                clientNum = stoi(cmd.substr(7, cmd.length() - 1));
+                std::cout << "Fixed Client num: " << clientNum;
             }
         }
     }
@@ -110,7 +111,8 @@ void MyGame::update() {
             send("Y_" + std::to_string(y));
         }
     }
-    draw.calcPoints(game_data.mouseX, game_data.mouseY, game_data.mouseDown);
+    draw.calcPoints(game_data.mouseX, game_data.mouseY, 
+        game_data.mouseDown);
 }
 
 void MyGame::render(SDL_Renderer* renderer) {
