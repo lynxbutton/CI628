@@ -83,13 +83,59 @@ void MyGame::input(SDL_Event& event) {
     switch (event.type) {
     case SDL_MOUSEBUTTONDOWN:
         mouseDown = true;
-        send("M_DOWN");
+        if (clientNum == game_data.drawingPlayer)
+        {
+            send("M_DOWN");
+        }
 
         break;
     case SDL_MOUSEBUTTONUP:
         mouseDown = false;
-        send("M_UP");
+        if (clientNum == game_data.drawingPlayer)
+        {
+            send("M_UP");
+        }
         break;
+    case SDL_KEYUP:
+        typing(SDL_GetKeyName(event.key.keysym.sym));
+        break;
+    case SDLK_KP_ENTER:
+
+        break;
+    }
+    
+}
+
+void MyGame::typing(std::string letter)
+{
+    if (comLength <= 24)
+    {
+        if (letter.length() == 1 && std::isalpha(letter[0]))
+        {
+            comment += letter;
+            if (comLength + 1 == 15)
+            {
+                comment += "\n";
+            }
+            comLength += 1;
+        }
+        else if (letter == "Space")
+        {
+            comment += " ";
+            if (comLength + 1 == 12)
+            {
+                comment += "\n";
+            }
+            comLength += 1;
+        }
+    }
+    if (letter == "Backspace")
+    {
+        if (comment.length() > 0)
+        {
+            comment = comment.substr(0, comment.length() - 1);
+            comLength -= 1;
+        }
     }
 }
 
@@ -98,6 +144,8 @@ void MyGame::start()
     clientNum = game_data.totalPlayers + 1;
     std::string str = "PLAY_" + std::to_string(clientNum);
     send(str);
+
+    font = TTF_OpenFont("fonts/Alatsi-Regular.ttf", 18);
 }
 
 void MyGame::update() {
@@ -123,7 +171,36 @@ void MyGame::render(SDL_Renderer* renderer) {
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, draw.getRect());
+    SDL_RenderFillRect(renderer, &commStrip);
+
+    SDL_SetRenderDrawColor(renderer, 220, 220, 220, 255);
+    SDL_RenderFillRect(renderer, &commSpace);
+
+    //comment type
+    if (font != NULL)
+    {
+        textSurface = TTF_RenderUTF8_Blended_Wrapped(font, comment.c_str(), textColour, 200);
+        textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        int textW = 0;
+        int textH = 0;
+
+        SDL_QueryTexture(textTexture, NULL, NULL, &textW, &textH);
+        textRect = { 565, 450, textW, textH };
+        SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+        SDL_RenderPresent(renderer);
+        SDL_FreeSurface(textSurface);
+        SDL_DestroyTexture(textTexture);
+    }
+    else
+    {
+        printf("Could not find font.");
+    }
+
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     draw.renderPoints(renderer);
+}
+
+void MyGame::close(){
+    TTF_CloseFont(font);
 }

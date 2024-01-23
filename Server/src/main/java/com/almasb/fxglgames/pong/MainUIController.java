@@ -42,9 +42,6 @@ import java.awt.*;
 public class MainUIController implements UIController {
 
     @FXML
-    private Label labelScorePlayer;
-
-    @FXML
     private Label labelScoreEnemy;
     @FXML
     private Label typedComm;
@@ -53,24 +50,15 @@ public class MainUIController implements UIController {
         return labelScoreEnemy;
     }
 
-    public Label getLabelScorePlayer() {
-        return labelScorePlayer;
-    }
-
     public void setTypingComm(String txt) {labelScoreEnemy.setText(txt);}
 
     @Override
     public void init() {
-        labelScorePlayer.setFont(FXGL.getUIFactory().newFont(72));
         labelScoreEnemy.setFont(FXGL.getUIFactory().newFont(22));
 
         labelScoreEnemy.layoutBoundsProperty().addListener((observable, oldValue, newBounds) -> {
             double width = newBounds.getWidth();
             labelScoreEnemy.setTranslateX(800 - 100 - width);
-        });
-
-        labelScorePlayer.textProperty().addListener((observable, oldValue, newValue) -> {
-            animateLabel(labelScorePlayer);
         });
 
         labelScoreEnemy.textProperty().addListener((observable, oldValue, newValue) -> {

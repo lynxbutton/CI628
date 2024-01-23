@@ -1,4 +1,5 @@
 #include "SDL_net.h"
+#include <SDL_ttf.h>
 
 #include "MyGame.h"
 
@@ -83,7 +84,7 @@ void loop(SDL_Renderer* renderer) {
     while (is_running) {
         // input
         while (SDL_PollEvent(&event)) {
-            if ((event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) && event.key.repeat == 0) {
+            if (event.key.repeat == 0) {
                 game->input(event);
 
                 switch (event.key.keysym.sym) {
@@ -109,6 +110,8 @@ void loop(SDL_Renderer* renderer) {
 
         SDL_Delay(17);
     }
+
+    game->close();
 }
 
 int run_game() {
@@ -150,6 +153,8 @@ int main(int argc, char** argv) {
         exit(2);
     }
 
+    TTF_Init();
+
     IPaddress ip;
 
     // Resolve host (ip name + port) into an IPaddress type
@@ -178,6 +183,8 @@ int main(int argc, char** argv) {
 
     // Shutdown SDL_net
     SDLNet_Quit();
+
+    TTF_Quit();
 
     // Shutdown SDL
     SDL_Quit();

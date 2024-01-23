@@ -156,7 +156,7 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
                     if(comLength > 0)
                     {
                         comLength -= 1;
-                        comment = comment.substring(0, comment.length() - 1);
+                        comment = comment.substring(0, comLength - 1);
                         controller.setTypingComm(comment);
                     }
                 }
@@ -212,49 +212,6 @@ public class PongApp extends GameApplication implements MessageHandler<String> {
         t.setDaemon(true);
         t.start();
     }
-
-    @Override
-    protected void initPhysics() {
-        /*getPhysicsWorld().setGravity(0, 0);
-
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.BALL, EntityType.WALL) {
-            @Override
-            protected void onHitBoxTrigger(Entity a, Entity b, HitBox boxA, HitBox boxB) {
-                if (boxB.getName().equals("LEFT")) {
-                    inc("player2score", +1);
-
-                    server.broadcast("SCORES," + geti("player1score") + "," + geti("player2score"));
-
-                    server.broadcast(HIT_WALL_LEFT);
-                } else if (boxB.getName().equals("RIGHT")) {
-                    inc("player1score", +1);
-
-                    server.broadcast("SCORES," + geti("player1score") + "," + geti("player2score"));
-
-                    server.broadcast(HIT_WALL_RIGHT);
-                } else if (boxB.getName().equals("TOP")) {
-                    server.broadcast(HIT_WALL_UP);
-                } else if (boxB.getName().equals("BOT")) {
-                    server.broadcast(HIT_WALL_DOWN);
-                }
-
-                getGameScene().getViewport().shakeTranslational(5);
-            }
-        });
-
-        CollisionHandler ballBatHandler = new CollisionHandler(EntityType.BALL, EntityType.PLAYER_BAT) {
-            @Override
-            protected void onCollisionBegin(Entity a, Entity bat) {
-                playHitAnimation(bat);
-
-                server.broadcast(bat == player1 ? BALL_HIT_BAT1 : BALL_HIT_BAT2);
-            }
-        };
-
-        getPhysicsWorld().addCollisionHandler(ballBatHandler);
-        getPhysicsWorld().addCollisionHandler(ballBatHandler.copyFor(EntityType.BALL, EntityType.ENEMY_BAT));*/
-    }
-
     @Override
     protected void initUI() {
         controller = new MainUIController();
